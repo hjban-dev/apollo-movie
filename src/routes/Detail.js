@@ -28,41 +28,57 @@ const Container = styled.div`
 
 const Column = styled.div`
 	margin-left: 10px;
+	width: 50%;
 `;
 
 const Title = styled.h1`
-	font-size: 65px;
-	margin-bottom: 15px;
-`;
-
-const Subtitle = styled.h4`
-	font-size: 35px;
+	font-size: 55px;
 	margin-bottom: 10px;
 `;
 
+const Subtitle = styled.h4`
+	font-size: 25px;
+	margin-bottom: 30px;
+`;
+
 const Description = styled.p`
-	font-size: 28px;
+	font-size: 22px;
+	line-height: 1.3;
 `;
 
 const Poster = styled.div`
 	width: 25%;
 	height: 60%;
 	background-color: transparent;
+	background-image: url(${props => props.bg});
+	background-size: cover;
+	background-position: center center;
 `;
 
 export default () => {
-	const { id } = useParams();
+	let { id } = useParams();
+	id = parseInt(id);
 	const { loading, data } = useQuery(GET_MOVIE, {
 		variables: { id }
 	});
 	return (
 		<Container>
 			<Column>
-				<Title>Name</Title>
-				<Subtitle>English · 4.5</Subtitle>
-				<Description>lorem ipsum lalalla </Description>
+				<Title>{loading ? "Loading..." : data.movie.title}</Title>
+				{!loading && data.movie && (
+					<>
+						<Subtitle>
+							{data.movie.language} · {data.movie.rating}
+						</Subtitle>
+						<Description>
+							{data.movie.description_intro}
+						</Description>
+					</>
+				)}
 			</Column>
-			<Poster></Poster>
+			<Poster
+				bg={data && data.movie ? data.movie.medium_cover_image : ""}
+			></Poster>
 		</Container>
 	);
 };
